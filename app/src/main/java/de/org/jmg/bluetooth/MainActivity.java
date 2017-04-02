@@ -15,6 +15,7 @@ import android.content.Context;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.UUID;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ENABLE_BT = 1;
+    private static final String TAG = "JMG" ;
     private Button onBtn;
     private Button offBtn;
     private Button listBtn;
@@ -215,11 +218,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    final BroadcastReceiver bReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
+    final BroadcastReceiver bReceiver = new BroadcastReceiver()
+    {
+        public void onReceive(Context context, Intent intent)
+        {
             String action = intent.getAction();
             // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+            if (BluetoothDevice.ACTION_FOUND.equals(action))
+            {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // add the name and the MAC address of the object to the arrayAdapter
@@ -227,8 +233,67 @@ public class MainActivity extends AppCompatActivity {
                 BTDevices.add(device);
                 BTArrayAdapter.notifyDataSetChanged();
             }
+            else if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action))
+            {
+                final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (device != null)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Pin");
+
+// Set up the input
+                    final EditText input = new EditText(MainActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(input);
+
+// Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            String m_Text = input.getText().toString();
+                            setBluetoothPairingPin(device, m_Text);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                }
+            }
         }
     };
+    public void setBluetoothPairingPin(BluetoothDevice device, String pin)
+    {
+
+        try {
+            byte[] pinBytes = (byte[]) BluetoothDevice.class.getMethod("convertPinToBytes", String.class).invoke(BluetoothDevice.class, pin);
+            Log.d(TAG, "Try to set the PIN");
+            Method m = device.getClass().getMethod("setPin", byte[].class);
+            m.invoke(device, pinBytes);
+            Log.d(TAG, "Success to add the PIN.");
+            try {
+                device.getClass().getMethod("setPairingConfirmation", boolean.class).invoke(device, true);
+                Log.d(TAG, "Success to setPairingConfirmation.");
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     public void find(View view) {
         if (myBluetoothAdapter.isDiscovering()) {
