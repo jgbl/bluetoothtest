@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="30dp" >
-
+        android:layout_below="@+id/text"
+        android:id="@+id/ll0">
         <Button
             android:id="@+id/turnOn"
             android:layout_width="wrap_content"
@@ -35,9 +35,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="80dp"
-        android:id="@+id/linearLayout">
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout"
+        android:layout_below="@+id/ll0" >
 
         <Button
             android:id="@+id/paired"
@@ -50,6 +50,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Find" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linearLayout"
+        android:id="@+id/linearLayout2">
+
+    <Button
+            android:id="@+id/btnPair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pair" />
+        <Button
+            android:id="@+id/btnUnPair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unpair" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/linearLayout2"
+    android:id="@+id/linearLayout3">
 
         <ListView
             android:id="@+id/listView1"
@@ -63,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@+id/linearLayout">
+        android:layout_below="@+id/linearLayout3">
 
         <Button
             android:id="@+id/btnSend"

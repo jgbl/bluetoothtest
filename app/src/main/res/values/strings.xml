@@ -9,5 +9,7 @@
     <string name="List">List paired Devices</string>
     <string name="Find">Search new Devices / Cancel</string>
     <string name="send">send</string>
+    <string name="pair">pair</string>
+    <string name="unpair">unpair</string>
 
 </resources>
