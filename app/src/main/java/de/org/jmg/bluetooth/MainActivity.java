@@ -204,6 +204,17 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+    /**
+          * Makes this device discoverable for 300 seconds (5 minutes).
+          */
+    private void ensureDiscoverable() {
+        if (myBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+    }
+
 
     public void on(View view) {
         if (!myBluetoothAdapter.isEnabled()) {
